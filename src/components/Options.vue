@@ -6,11 +6,14 @@
     <input type="radio" name="mode" value="light-only">Light Only<br>
     <input type="radio" name="mode" value="free-board">Free board
   </div>
+
 </template>
 
 <script>
+
 export default {
   name: 'Options.vue',
+
 };
 </script>
 

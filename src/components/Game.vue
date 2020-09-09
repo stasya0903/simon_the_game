@@ -11,9 +11,8 @@
       </div>
 
     </div>
-      <Info></Info>
+    <Info @start="start"></Info>
     <Options></Options>
-    <div class="game-options"></div>
   </div>
 </template>
 
@@ -26,7 +25,29 @@ import Options from './Options.vue';
 export default {
   name: 'Game',
   components: {
-    Button, Info, Options,
+    Button,
+    Info,
+    Options,
+  },
+  data() {
+    return {
+      sequence: [],
+    };
+  },
+  methods: {
+    generateSequence() {
+      for (let i = 0; i < 4; i++) {
+        const randomNumber = Math.floor((Math.random() * 4) + 1);
+        this.sequence = [...this.sequence, randomNumber];
+      }
+    },
+    start() {
+      this.generateSequence();
+    },
+    clickButtons() {
+      for(i=0, i<this.sequence.length, i++)
+      this.$ref[i].click();
+    },
   },
 };
 </script>
