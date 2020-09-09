@@ -1,5 +1,5 @@
 <template>
-  <li :class="{'active':isActive}" @click="makeAction()">
+  <li :id='num' :class="{'active':isActive}" @action="action()" @click="(event)=>makeAction(event)">
     <Audio :num="num" :ref="refName"></Audio>
   </li>
 
@@ -14,6 +14,7 @@ export default {
   components: { Audio },
   props: {
     num: Number,
+    userPlaying: Boolean,
   },
 
   data() {
@@ -23,9 +24,13 @@ export default {
     };
   },
   methods: {
-    makeAction() {
+    action(){
       this.makeSound();
       this.changeColor();
+    },
+    makeAction(event) {
+      this.action();
+      this.$emit('userStep');
     },
     makeSound() {
       const el = this.$refs[this.refName].$el;

@@ -1,8 +1,8 @@
 <template>
   <div class="game-info">
-    <h2>Round: {{<span>{{}}</span>}}</h2>
+    <h2>Round: {{round}}</h2>
     <button @click="$emit('start')" >Start</button>
-    <p data-action="lose">Sorry, you lost after <span data-round="0"></span> rounds!</p>
+    <p>{{msg}}</p>
   </div>
 </template>
 
@@ -11,6 +11,7 @@ export default {
   name: 'Info',
   props: {
     round: Number,
+    msg: String,
   },
 };
 </script>
