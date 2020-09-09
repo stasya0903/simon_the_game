@@ -1,9 +1,15 @@
 <template>
   <div class="game-options">
     <h2>Уровень Сложности:</h2>
-    <input type="radio" name="mode" value="normal" checked>Легкий<br>
-    <input type="radio" name="mode" value="sound-only">Sound Only<br>
-    <input type="radio" name="mode" value="light-only">Light Only<br>
+    <div v-for="item of this.levels" :key="item.index">
+      <input type="radio"
+             :checked="item.value === currentLevel"
+             name="mode"
+             :value="item.value"
+             @input="$emit('setLevel', item.value)">{{item.name}}
+              <br>
+    </div>
+
   </div>
 
 </template>
@@ -12,6 +18,10 @@
 
 export default {
   name: 'Options.vue',
+  props: {
+    levels: Array,
+    currentLevel: String,
+  },
 
 };
 </script>

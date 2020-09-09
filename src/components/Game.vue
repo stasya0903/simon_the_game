@@ -3,15 +3,38 @@
     <div class="game-board">
       <div class="simon">
         <ul>
-          <Button @userStep="addStep(1)" class="tile red" ref='1' :num="1"></Button>
-          <Button @userStep="addStep(2)" class="tile blue" ref='2' :num="2" ></Button>
-          <Button @userStep="addStep(3)" class="tile yellow" ref='3' :num="3" ></Button>
-          <Button @userStep="addStep(4)" class="tile green" ref='4' :num="4" ></Button>
+          <Button @userStep="addStep(1)"
+                  class="tile red"
+                  ref='1'
+                  :num="1"
+                  :userPlaying="userPlaying"></Button>
+          <Button @userStep="addStep(2)"
+                  class="tile blue"
+                  ref='2'
+                  :num="2"
+                  :userPlaying="userPlaying"></Button>
+          <Button @userStep="addStep(3)"
+                  class="tile yellow"
+                  ref='3'
+                  :num="3"
+                  :userPlaying="userPlaying"></Button>
+          <Button @userStep="addStep(4)"
+                  class="tile green"
+                  ref='4'
+                  :num="4"
+                  :userPlaying="userPlaying"></Button>
         </ul>
       </div>
     </div>
-    <Info @start="start" :round="this.round" :msg="this.msg"></Info>
-    <Options></Options>
+    <Info
+      @start="start"
+      :round="this.round"
+      :msg="this.msg"
+    ></Info>
+    <Options
+      @setLevel='setLevel'
+      :levels="this.levels"
+      :currentLevel="this.currentLevel"></Options>
   </div>
 </template>
 
@@ -30,6 +53,25 @@ export default {
   },
   data() {
     return {
+      levels: [
+        {
+          value: 'light',
+          speed: 1500,
+          name: 'Легкий',
+        },
+        {
+          value: 'middle',
+          speed: 1000,
+          name: 'Средний',
+        },
+        {
+          value: 'hard',
+          speed: 400,
+          name: 'Сложный',
+
+        },
+      ],
+      currentLevel: 'light',
       sequence: [],
       round: 1,
       userPlaying: false,
@@ -37,21 +79,38 @@ export default {
       msg: 'Нажмите старт для начала',
     };
   },
+  computed: {
+    speed() {
+      return this.levels.find((el) => el.value === this.currentLevel).speed;
+    },
+  },
   methods: {
     start() {
       this.playRound();
     },
     playRound() {
-      this.msg = 'Смотрите';
-      this.showSequence();
-      this.msg = 'Повторите';
-      this.userPlaying = true;
+      setTimeout(() => {
+        this.msg = 'Смотрите';
+        this.showSequence();
+      }, 1000);
     },
-    showSequence() {
+    async showSequence() {
+      await this.playSequence();
+      setTimeout(() => {
+        this.userPlaying = true;
+        this.msg = 'Повторите';
+      }, 1000);
+    },
+
+    playSequence() {
       this.clearSequence();
       this.generateSequence();
-      this.clickButtons();
+      return this.sequence.reduce(async (prev, nextId) => {
+        await prev;
+        return this.clickButton(nextId);
+      }, Promise.resolve());
     },
+
     addStep(number) {
       this.userAnswer = [...this.userAnswer, number];
       this.isThisStepCorrect(number) ? this.continueGame() : this.gameOver();
@@ -64,6 +123,10 @@ export default {
     continueGame() {
       if (this.userAnswer.length === this.sequence.length) {
         this.nextRound();
+        this.userPlaying = false;
+        setTimeout(() => {
+          this.msg = 'Отлично!';
+        }, 500);
       }
     },
     nextRound() {
@@ -72,7 +135,15 @@ export default {
       this.playRound();
     },
     gameOver() {
+      this.resetGame();
       this.msg = 'Вы проиграли, нажмите старт для начала';
+    },
+    resetGame() {
+      this.sequence = [];
+      this.round = 1;
+      this.userPlaying = false;
+      this.userAnswer = [];
+      this.msg = 'Нажмите старт для начала';
     },
     clearSequence() {
       this.sequence = [];
@@ -83,13 +154,20 @@ export default {
         this.sequence = [...this.sequence, randomNumber];
       }
     },
-    clickButtons() {
-      for (let i = 0; i < this.sequence.length; i++) {
+
+    clickButton(number) {
+      return new Promise((resolve) => {
         setTimeout(() => {
-          this.$refs[this.sequence[i]].action();
-        }, 1500 * (i + 1));
-      }
+          this.$refs[number].action();
+          resolve();
+        }, this.speed);
+      });
     },
+    setLevel(level) {
+      this.resetGame();
+      this.currentLevel = level;
+    },
+
   },
 };
 </script>

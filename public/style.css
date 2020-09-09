@@ -79,7 +79,7 @@ p[data-action="lose"] {
     text-indent: 10000px;
 }
 
-.red:hover, .blue:hover, .yellow:hover, .green:hover {
+.hoverable:hover {
     border: 2px solid black
 }
 
