@@ -1,6 +1,6 @@
 <template>
   <div class="game-info">
-    <h2>Round: <span data-round="0">0</span></h2>
+    <h2>Round: {{<span>{{}}</span>}}</h2>
     <button @click="$emit('start')" >Start</button>
     <p data-action="lose">Sorry, you lost after <span data-round="0"></span> rounds!</p>
   </div>
@@ -9,6 +9,9 @@
 <script>
 export default {
   name: 'Info',
+  props: {
+    round: Number,
+  },
 };
 </script>
 
